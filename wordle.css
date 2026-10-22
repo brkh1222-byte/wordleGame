@@ -1,0 +1,156 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+}
+body {
+  height: 100vh;
+  background-color: rgb(59, 216, 111);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+}
+body h1 {
+  font-size: 70px;
+  color: rgb(255, 255, 255);
+}
+.congrats {
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  color: rgb(255, 255, 255);
+  font-size: 20px;
+}
+.board {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+}
+.board div {
+  width: 100px;
+  height: 100px;
+  background-color: rgb(255, 255, 255);
+  border: none;
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+  transition:
+    transform 0.5s ease,
+    background-color 0.5s ease,
+    color 0.25s ease;
+}
+.board div.flip {
+  transform: rotateY(90deg);
+}
+
+.keyboard {
+  height: fit-content;
+  width: fit-content;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.row1 {
+  width: 800px;
+  height: 80px;
+  display: flex;
+  justify-content: space-between;
+  gap: 5px;
+}
+.row2 {
+  width: 800px;
+  height: 80px;
+  display: flex;
+  justify-content: space-between;
+  gap: 5px;
+}
+.row3 {
+  width: 800px;
+  height: 80px;
+  display: flex;
+  justify-content: space-between;
+  gap: 5px;
+}
+.row1 button {
+  border: 1px solid grey;
+  background-color: rgb(255, 255, 239);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.3s ease-in-out;
+  font-size: 20px;
+}
+.row2 button {
+  border: 1px solid grey;
+  background-color: rgb(255, 255, 239);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.3s ease-in-out;
+  font-size: 20px;
+}
+.row3 button {
+  border: 1px solid grey;
+  background-color: rgb(255, 255, 239);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.3s ease-in-out;
+  font-size: 20px;
+}
+.row3 button:nth-of-type(1) {
+  width: 1500px;
+  height: 80px;
+  transition: transform 0.3s ease-in-out;
+  font-size: 20px;
+}
+.row3 button:nth-of-type(9) {
+  width: 1500px;
+  height: 80px;
+  transition: transform 0.3s ease-in-out;
+  font-size: 20px;
+}
+body p {
+  font-size: 15px;
+}
+.row1 button:hover {
+  transform: scale(1.1);
+  background-color: rgb(207, 207, 186);
+}
+.row2 button:hover {
+  transform: scale(1.1);
+  background-color: rgb(207, 207, 186);
+}
+.row3 button:hover {
+  transform: scale(1.1);
+  background-color: rgb(207, 207, 186);
+}
+.row3 button:nth-of-type(1):hover {
+  transform: scale(1.1);
+  background-color: rgb(207, 207, 186);
+}
+.row3 button:nth-of-type(9):hover {
+  transform: scale(1.1);
+  background-color: rgb(207, 207, 186);
+}
+body button {
+  border-radius: 10px;
+  width: 100px;
+  height: 40px;
+  background-color: beige;
+  border: 1px solid grey;
+  transition: transform 0.3s ease-in-out;
+}
+body button:hover {
+  background-color: rgb(193, 193, 172);
+  transform: scale(1.5);
+}

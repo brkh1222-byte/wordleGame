@@ -1,0 +1,24 @@
+{
+  "name": "wordlegame",
+  "version": "1.0.0",
+  "description": "",
+  "main": "wordle.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/brkh1222-byte/wordleGame.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/brkh1222-byte/wordleGame/issues"
+  },
+  "homepage": "https://github.com/brkh1222-byte/wordleGame#readme",
+  "dependencies": {
+    "jsdom": "^24.1.0"
+  }
+}
