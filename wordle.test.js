@@ -63,3 +63,59 @@ test("winning guess marks the game as won", async () => {
   assert.equal(window.congratulations.textContent, "YOU WON!");
   assert.equal(window.gameOver, true);
 });
+
+function waitFor(predicate, label) {
+  return new Promise((resolve, reject) => {
+    const start = Date.now();
+    const check = () => {
+      if (predicate()) return resolve();
+      if (Date.now() - start > 5000) return reject(new Error(`Timed out: ${label}`));
+      setTimeout(check, 50);
+    };
+    check();
+  });
+}
+
+test("delete works on rows after the first", async () => {
+  const { window, tiles } = createGame();
+
+  ["C", "R", "A", "N", "E"].forEach((letter) => window.addLetter(letter));
+  window.submitGuess();
+  await waitFor(() => window.currentRow === 1, "advance to row 2");
+
+  ["S", "L"].forEach((letter) => window.addLetter(letter));
+  window.deleteLetter();
+
+  assert.equal(tiles[5].textContent, "S");
+  assert.equal(tiles[6].textContent, "");
+  assert.equal(window.currentCol, 1);
+});
+
+test("submitting twice during the reveal only uses one row", async () => {
+  const { window } = createGame();
+
+  ["C", "R", "A", "N", "E"].forEach((letter) => window.addLetter(letter));
+  window.submitGuess();
+  window.submitGuess();
+  window.deleteLetter();
+  await waitFor(() => window.currentRow >= 1, "advance to row 2");
+  await new Promise((r) => setTimeout(r, 2000));
+
+  assert.equal(window.currentRow, 1);
+});
+
+test("a green key is never downgraded to yellow", async () => {
+  const { window } = createGame();
+  const keyFor = (l) =>
+    [...window.document.querySelectorAll(".keyboard button")].find((k) => k.textContent.trim() === l);
+
+  ["B", "R", "A", "N", "D"].forEach((letter) => window.addLetter(letter));
+  window.submitGuess();
+  await waitFor(() => window.currentRow === 1, "first guess");
+  assert.equal(keyFor("B").dataset.color, "#58ac58");
+
+  ["A", "B", "B", "E", "Y"].forEach((letter) => window.addLetter(letter));
+  window.submitGuess();
+  await waitFor(() => window.currentRow === 2, "second guess");
+  assert.equal(keyFor("B").dataset.color, "#58ac58");
+});

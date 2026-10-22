@@ -13,6 +13,10 @@ let currentRow = 0;
 let currentCol = 0;
 let currentTileIndex = 0;
 let gameOver = false;
+let isRevealing = false;
+let pendingTimers = [];
+
+const KEY_RANK = { "#a3adc3": 1, "#f2c135": 2, "#58ac58": 3 };
 
 Object.defineProperties(window, {
   addLetter: {
@@ -76,25 +80,27 @@ function getCurrentRowTiles() {
   return tiles.slice(rowStart, rowStart + MAX_COLS);
 }
 
+function schedule(fn, delay) {
+  pendingTimers.push(setTimeout(fn, delay));
+}
+
+// Browsers normalize style colors to rgb(), so track the key state in a data attribute
+// and never downgrade a key (green > yellow > grey).
 function setKeyColor(letter, color) {
   keys.forEach((key) => {
     if (key.textContent.trim() !== letter) return;
 
-    if (color === "#58ac58") {
-      key.style.backgroundColor = "#58ac58";
-      key.style.color = "white";
-    } else if (color === "#f2c135" && key.style.backgroundColor !== "#58ac58") {
-      key.style.backgroundColor = "#f2c135";
-      key.style.color = "white";
-    } else if (color === "#a3adc3" && !key.style.backgroundColor) {
-      key.style.backgroundColor = "#a3adc3";
-      key.style.color = "white";
-    }
+    const currentRank = KEY_RANK[key.dataset.color] || 0;
+    if (KEY_RANK[color] <= currentRank) return;
+
+    key.dataset.color = color;
+    key.style.backgroundColor = color;
+    key.style.color = "white";
   });
 }
 
 function addLetter(letter) {
-  if (gameOver || currentRow >= MAX_ROWS || currentCol >= MAX_COLS) return;
+  if (gameOver || isRevealing || currentRow >= MAX_ROWS || currentCol >= MAX_COLS) return;
 
   const activeTile = getCurrentRowTiles()[currentCol];
   if (!activeTile) return;
@@ -105,12 +111,12 @@ function addLetter(letter) {
 }
 
 function deleteLetter() {
-  if (gameOver || currentTileIndex <= currentRow * MAX_COLS) return;
+  if (gameOver || isRevealing || currentCol <= 0) return;
 
   currentCol -= 1;
   syncTileIndex();
 
-  const activeTile = getCurrentRowTiles()[currentCol - currentRow * MAX_COLS];
+  const activeTile = getCurrentRowTiles()[currentCol];
   if (!activeTile) return;
 
   activeTile.textContent = "";
@@ -120,9 +126,11 @@ function deleteLetter() {
 }
 
 function submitGuess() {
-  if (gameOver) return;
+  if (gameOver || isRevealing) return;
 
   if (currentCol !== MAX_COLS) return;
+
+  isRevealing = true;
 
   const rowStart = currentRow * MAX_COLS;
   const rowTiles = tiles.slice(rowStart, rowStart + MAX_COLS);
@@ -151,10 +159,10 @@ function submitGuess() {
     const color = colors[index];
     const letter = guess[index];
 
-    setTimeout(() => {
+    schedule(() => {
       tile.classList.add("flip");
 
-      setTimeout(() => {
+      schedule(() => {
         tile.style.backgroundColor = color;
         tile.style.color = "white";
         tile.classList.remove("flip");
@@ -165,7 +173,9 @@ function submitGuess() {
 
   const revealDuration = MAX_COLS * 300 + 250;
 
-  setTimeout(() => {
+  schedule(() => {
+    isRevealing = false;
+
     if (guess === secretWord) {
       congratulations.textContent = "YOU WON!";
       gameOver = true;
@@ -198,6 +208,11 @@ keys.forEach((key) => {
 document.addEventListener("keydown", (e) => {
   const key = e.key;
 
+  if (e.ctrlKey || e.metaKey || e.altKey) return;
+
+  // Stop Enter/Backspace from also "clicking" an on-screen key that has focus.
+  if (key === "Enter" || key === "Backspace") e.preventDefault();
+
   if (key === "Backspace") {
     deleteLetter();
   } else if (key === "Enter") {
@@ -213,6 +228,9 @@ newGameBtn.addEventListener("click", () => {
   currentCol = 0;
   currentTileIndex = 0;
   gameOver = false;
+  isRevealing = false;
+  pendingTimers.forEach(clearTimeout);
+  pendingTimers = [];
 
   tiles.forEach((tile) => {
     tile.textContent = "";
@@ -224,5 +242,8 @@ newGameBtn.addEventListener("click", () => {
   keys.forEach((key) => {
     key.style.backgroundColor = "";
     key.style.color = "";
+    delete key.dataset.color;
   });
+
+  newGameBtn.blur();
 });
