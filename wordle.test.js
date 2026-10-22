@@ -23,6 +23,16 @@ function createGame() {
   };
 }
 
+test("typing on the keyboard fills the board", () => {
+  const { window, tiles } = createGame();
+
+  "blac".split("").forEach((key) =>
+    window.document.dispatchEvent(new window.KeyboardEvent("keydown", { key })),
+  );
+
+  assert.equal(tiles.slice(0, 4).map((t) => t.textContent).join(""), "BLAC");
+});
+
 test("wordle only allows five letters per guess", () => {
   const { window, tiles } = createGame();
 

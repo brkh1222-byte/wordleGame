@@ -3,7 +3,8 @@
   margin: 0;
 }
 body {
-  height: 100vh;
+  min-height: 100vh;
+  padding: 20px 0;
   background-color: rgb(59, 216, 111);
   display: flex;
   flex-direction: column;

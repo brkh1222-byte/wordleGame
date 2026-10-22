@@ -18,22 +18,9 @@ let pendingTimers = [];
 
 const KEY_RANK = { "#a3adc3": 1, "#f2c135": 2, "#58ac58": 3 };
 
+// addLetter/deleteLetter/submitGuess are already globals (function declarations);
+// redefining them on window throws in real browsers. Only expose the let/const state.
 Object.defineProperties(window, {
-  addLetter: {
-    value: addLetter,
-    writable: true,
-    configurable: true,
-  },
-  deleteLetter: {
-    value: deleteLetter,
-    writable: true,
-    configurable: true,
-  },
-  submitGuess: {
-    value: submitGuess,
-    writable: true,
-    configurable: true,
-  },
   currentRow: {
     get: () => currentRow,
     set: (value) => {
